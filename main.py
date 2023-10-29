@@ -40,34 +40,19 @@ def convert_to_mp4(input_file_path):
         ['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=codec_name', '-of',
          'default=noprint_wrappers=1:nokey=1', input_file_path], capture_output=True, text=True).stdout.strip()
 
-    # Check if the codec is supported by MOV
-    if codec_info in ['h264', 'mpeg4', 'aac']:
-        # Copy the stream if the codec is supported
-        if platform.system() == 'Darwin':  # Check if the operating system is macOS
-            subprocess.run(
-                ['ffmpeg', '-y', '-i', input_file_path, '-c:v', 'h264_videotoolbox', '-c:a', 'copy', output_file_path],
-                check=True)
-        elif platform.system() == 'Windows':  # Check if the operating system is Windows
-            gpu_info = subprocess.run(['wmic', 'path', 'win32_VideoController', 'get', 'name'], capture_output=True,
-                                      text=True).stdout
-            if 'NVIDIA' in gpu_info:  # Check if an NVIDIA GPU is available
-                subprocess.run(
-                    ['ffmpeg', '-y', '-hwaccel', 'cuda', '-i', input_file_path, '-c:v', 'h264_nvenc', '-c:a', 'copy',
-                     output_file_path], check=True)
-            else:  # Fallback to software encoding
-                subprocess.run(
-                    ['ffmpeg', '-y', '-i', input_file_path, '-c:v', 'libx264', '-c:a', 'aac', output_file_path],
-                    check=True)
-        else:  # Fallback to software encoding for other operating systems
-            subprocess.run(['ffmpeg', '-y', '-i', input_file_path, '-c:v', 'libx264', '-c:a', 'aac', output_file_path],
-                           check=True)
-    else:
-        # Re-encode the video if the codec is not supported
-        subprocess.run(['ffmpeg', '-y', '-i', input_file_path, '-c:v', 'libx264', '-c:a', 'aac', output_file_path],
-                       check=True)
+    # Check if the codec is supported by MP4
+    if platform.system() == 'Darwin':  # Check if the operating system is macOS
+        subprocess.run(
+            ['ffmpeg', '-y', '-i', input_file_path, '-c:v', 'hevc_videotoolbox', '-c:a', 'copy', output_file_path],
+            check=True)
+    else:  # Default to CUDA for non-macOS systems
+        subprocess.run(
+            ['ffmpeg', '-y', '-hwaccel', 'cuda', '-i', input_file_path, '-c:v', 'hevc_nvenc', '-c:a', 'copy',
+             output_file_path], check=True)
 
     text.set(text.get() + '\nConverted: ' + os.path.basename(
         input_file_path))  # Update the label text with just the filename
+
 
 
 def open_file_dialog():
