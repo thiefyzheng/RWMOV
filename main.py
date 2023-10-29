@@ -36,13 +36,12 @@ root.withdraw()
 root.title('Video to MOV converter')
 
 text = StringVar()
-text.set('Drag and Drop Video Here')
-
-label = tk.Label(root, textvariable=text, width=40, height=10)
-label.pack(expand=1, fill='both')
 
 # Only enable drag and drop on non-macOS platforms
 if platform.system() != 'Darwin':
+    text.set('Drag and Drop Video Here')
+    label = tk.Label(root, textvariable=text, width=40, height=10)
+    label.pack(expand=1, fill='both')
     label.drop_target_register(DND_FILES)
     label.dnd_bind('<<Drop>>', drop)
 
