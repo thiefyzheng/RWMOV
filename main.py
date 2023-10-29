@@ -1,4 +1,5 @@
 import os
+import platform
 import subprocess
 import tkinter as tk
 from tkinter import filedialog, StringVar
@@ -6,7 +7,7 @@ from tkinterdnd2 import DND_FILES, TkinterDnD
 
 def drop(event):
     path = event.data
-    if os.name == 'nt':  # Check if the operating system is Windows
+    if platform.system() == 'Windows':  # Check if the operating system is Windows
         path = path[1:-1]  # Remove the {} characters for Windows
         path = path.replace('/', '\\')  # Replace / with \ for Windows paths
 
@@ -41,7 +42,7 @@ label = tk.Label(root, textvariable=text, width=40, height=10)
 label.pack(expand=1, fill='both')
 
 # Only enable drag and drop on non-macOS platforms
-if os.name != 'posix':
+if platform.system() != 'Darwin':
     label.drop_target_register(DND_FILES)
     label.dnd_bind('<<Drop>>', drop)
 
