@@ -31,6 +31,10 @@ def open_file_dialog():
     path = filedialog.askdirectory()  # Open the file dialog to select a directory
     process_path(path)
 
+def open_single_file_dialog():
+    path = filedialog.askopenfilename()  # Open the file dialog to select a single file
+    process_path(path)
+
 root = TkinterDnD.Tk()
 root.withdraw()
 root.title('Video to MOV converter')
@@ -40,14 +44,23 @@ text = StringVar()
 # Only enable drag and drop on non-macOS platforms
 if platform.system() != 'Darwin':
     text.set('Drag and Drop Video Here')
-    label = tk.Label(root, textvariable=text, width=40, height=10)
-    label.pack(expand=1, fill='both')
+else:
+    text.set('🍎')
+
+label = tk.Label(root, textvariable=text, width=40, height=10)
+label.pack(expand=1, fill='both')
+
+if platform.system() != 'Darwin':
     label.drop_target_register(DND_FILES)
     label.dnd_bind('<<Drop>>', drop)
 
-button = tk.Button(root, text='Select Folder', command=open_file_dialog)
-button.pack()
+folder_button = tk.Button(root, text='Select Folder', command=open_file_dialog)
+folder_button.pack()
+
+file_button = tk.Button(root, text='Select File', command=open_single_file_dialog)
+file_button.pack()
 
 root.update_idletasks()
 root.deiconify()
 root.mainloop()
+🍎🍎🍎app
