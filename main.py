@@ -35,25 +35,18 @@ import platform
 def convert_to_mp4(input_file_path):
     output_file_path = os.path.splitext(input_file_path)[0] + '.mp4'
 
-    # Get the codec information
-    codec_info = subprocess.run(
-        ['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=codec_name', '-of',
-         'default=noprint_wrappers=1:nokey=1', input_file_path], capture_output=True, text=True).stdout.strip()
-
-    # Check if the codec is supported by MP4
+    # Use the specific ffmpeg settings provided
     if platform.system() == 'Darwin':  # Check if the operating system is macOS
         subprocess.run(
-            ['ffmpeg', '-y', '-i', input_file_path, '-c:v', 'hevc_videotoolbox', '-c:a', 'copy', output_file_path],
+            ['ffmpeg', '-i', input_file_path, '-vcodec', 'hevc_videotoolbox', '-b:v', '6000k', '-tag:v', 'hvc1', '-c:a', 'eac3', '-b:a', '224k', output_file_path],
             check=True)
     else:  # Default to CUDA for non-macOS systems
         subprocess.run(
-            ['ffmpeg', '-y', '-hwaccel', 'cuda', '-i', input_file_path, '-c:v', 'hevc_nvenc', '-c:a', 'copy',
+            ['ffmpeg', '-i', input_file_path, '-vcodec', 'hevc_nvenc', '-b:v', '6000k', '-tag:v', 'hvc1', '-c:a', 'eac3', '-b:a', '224k',
              output_file_path], check=True)
 
     text.set(text.get() + '\nConverted: ' + os.path.basename(
         input_file_path))  # Update the label text with just the filename
-
-
 
 def open_file_dialog():
     path = filedialog.askdirectory()  # Open the file dialog to select a directory
