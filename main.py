@@ -63,4 +63,3 @@ file_button.pack()
 root.update_idletasks()
 root.deiconify()
 root.mainloop()
-🍎🍎🍎app
