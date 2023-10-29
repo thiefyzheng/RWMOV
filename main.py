@@ -39,8 +39,11 @@ text.set('Drag and Drop Video Here')
 
 label = tk.Label(root, textvariable=text, width=40, height=10)
 label.pack(expand=1, fill='both')
-label.drop_target_register(DND_FILES)
-label.dnd_bind('<<Drop>>', drop)
+
+# Only enable drag and drop on non-macOS platforms
+if os.name != 'posix':
+    label.drop_target_register(DND_FILES)
+    label.dnd_bind('<<Drop>>', drop)
 
 button = tk.Button(root, text='Select Folder', command=open_file_dialog)
 button.pack()
